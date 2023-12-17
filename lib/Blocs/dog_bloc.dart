@@ -1,44 +1,65 @@
-import 'dart:async';
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dog_breed_app/Models/dog_breed_image_model.dart';
 import 'package:dog_breed_app/Models/dog_breed_model.dart';
 import 'package:dog_breed_app/Networking/api_services.dart';
 
-class DogEvent {}
+// Events
+abstract class DogBreedEvent {}
 
-class DogState {
-  final DogBreeds? dogBreeds;
+class FetchDogBreedsEvent extends DogBreedEvent {}
+
+// States
+abstract class DogBreedState {}
+
+class DogBreedInitialState extends DogBreedState {}
+
+class DogBreedLoadedState extends DogBreedState {
   final List<DogImage> dogImages;
 
-  DogState({this.dogBreeds, this.dogImages = const []});
+  DogBreedLoadedState(this.dogImages);
 }
 
-class DogBloc extends Bloc<DogEvent, DogState> {
-  final Networking _networking = Networking();
+class DogBreedErrorState extends DogBreedState {
+  final String errorMessage;
 
-  DogBloc() : super(DogState());
+  DogBreedErrorState(this.errorMessage);
+}
 
-  Stream<DogState> mapEventToState(DogEvent event) async* {
-    if (event is FetchDogData) {
-      try {
-        final DogBreeds dogBreeds = await _networking.fetchDogBreeds();
-        final List<Future<DogImage>> imageFutures = [];
+// Bloc
+class DogBreedBloc extends Bloc<DogBreedEvent, DogBreedState> {
+  final Networking networking = Networking();
 
-        for (var entry in dogBreeds.breedMap.keys) {
-          final breedName = entry;
-          imageFutures.add(_networking.fetchImagesByBreed(breedName));
-        }
+  DogBreedBloc() : super(DogBreedInitialState()) {
+    on<FetchDogBreedsEvent>(_mapFetchDogBreedsToState);
+  }
 
-        final List<DogImage> dogImages = await Future.wait(imageFutures);
+  void _mapFetchDogBreedsToState(FetchDogBreedsEvent event, Emitter<DogBreedState> emit) async {
+    try {
+      final DogBreeds dogBreeds = await networking.fetchDogBreeds();
+      final List<Future<DogImage>> imageFutures = [];
 
-        yield DogState(dogBreeds: dogBreeds, dogImages: dogImages);
-      } catch (e) {
-        yield DogState(); // Handle error state as needed
+      for (var entry in dogBreeds.breedMap.keys) {
+        final breedName = entry;
+        imageFutures.add(networking.fetchImagesByBreed(breedName));
+      }
+
+      final List<DogImage> dogImages = await Future.wait(imageFutures);
+      print('DogBreedLoadedState emitted');
+      emit(DogBreedLoadedState(dogImages));
+    } catch (e) {
+      // Handle different types of errors and provide more details in the error state
+      if (e is Exception) {
+        print('DogBreedErrorState emitted with error: $e');
+        emit(DogBreedErrorState('Error: ${e.toString()}'));
+      } else {
+        print('DogBreedErrorState emitted with unexpected error');
+        emit(DogBreedErrorState('Unexpected Error'));
       }
     }
   }
+
+
 }
 
 
 
-class FetchDogData extends DogEvent {}
