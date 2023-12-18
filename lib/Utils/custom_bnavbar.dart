@@ -12,9 +12,9 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 98,
+      height: 85,
       decoration: const BoxDecoration(
-        color: Colors.white, // Background color
+        color: Colors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.elliptical(50, 24),
           topRight: Radius.elliptical(50, 24),
@@ -33,9 +33,9 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
               IconButton(
                 icon: const Icon(Icons.home, size:33),
                 onPressed: () {
-                  // Add your action here
+                  // Home page cannot be change, therefore onPressed method is empty
                 },
-                color: Colors.blueAccent, // Selected color
+                color: Colors.blueAccent,
               ),
               const Text("Home", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.blueAccent),)
             ],
@@ -58,7 +58,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                           height: MediaQuery.of(context).size.height,
                           color: const Color(0x00f2f2f7),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start, // Align to the top
+                            mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
@@ -114,7 +114,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                     },
                   );
                 },
-                color: Colors.black, // Selected color
+                color: Colors.black,
               ),
               const Text("Settings", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.black),)
             ]

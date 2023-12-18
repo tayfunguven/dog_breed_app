@@ -15,20 +15,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      routes: {
-        '/': (context) => BlocProvider(
-          create: (context) => _dogBreedBloc,
-          child: const SplashScreen(),
-        ),
-        '/home': (context) => BlocProvider.value(
-          value: _dogBreedBloc,
-          child: const HomeScreen(),
-        ),
-      },
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'GalanoGrotesque'),
+    return BlocProvider(
+      create: (context) => _dogBreedBloc,
+      child: MaterialApp(
+        routes: {
+          '/': (context) => const SplashScreen(),
+          '/home': (context) => HomeScreen(),
+        },
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: 'GalanoGrotesque'),
+      ),
     );
   }
 }
-

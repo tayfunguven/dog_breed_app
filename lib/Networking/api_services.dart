@@ -1,8 +1,7 @@
 import 'dart:convert';
+import 'package:dog_breed_app/Models/dog_breed_image_model.dart';
+import 'package:dog_breed_app/Models/dog_breed_model.dart';
 import 'package:http/http.dart' as http;
-
-import '../Models/dog_breed_image_model.dart';
-import '../Models/dog_breed_model.dart';
 
 class Networking {
   final String baseUrl = 'https://dog.ceo/api';
